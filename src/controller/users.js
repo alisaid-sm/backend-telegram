@@ -55,7 +55,7 @@ const users = {
           if (err.message === 'Duplicate entry') {
             failed(res, [], 'Email Already Exist')
           } else {
-            failed(res, [], 'Email Already Exist')
+            failed(res, [], 'Email or Username Already Exist')
           }
         })
     } catch (error) {
@@ -90,7 +90,7 @@ const users = {
         .then(async (result) => {
           const results = result[0]
           if (!results) {
-            failed(res, [], 'Email not registered, Please register!')
+            failed(res, [], 'Username not registered, Please register!')
           } else {
             const match = await bcrypt.compare(data.password, results.password)
             if (match) {
@@ -123,6 +123,9 @@ const users = {
               failed(res, [], 'password salah')
             }
           }
+        })
+        .catch((err) => {
+          failed(res, [], err.message)
         })
     } catch (error) {
       failed(res, [], 'internal server error')
