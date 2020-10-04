@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken')
 const { privateKey } = require('../helper/env')
 const nodemailer = require('nodemailer')
 const env = require('../helper/env')
+const upload = require('../helper/upload')
+const fs = require('fs')
 
 const users = {
   register: async (req, res) => {
@@ -16,7 +18,8 @@ const users = {
       const dataNew = {
         name: data.name,
         email: data.email,
-        password: hash
+        password: hash,
+        image: 'default.png'
       }
       usersModels.register(dataNew)
         .then((result) => {
@@ -155,6 +158,57 @@ const users = {
         .catch((err) => {
           failed(res, [], err.message)
         })
+    } catch (error) {
+      failed(res, [], 'internal server error')
+    }
+  },
+  updatePatch: (req, res) => {
+    try {
+      upload.single('image')(req, res, (err) => {
+        if (err) {
+          failed(res, [], err.message)
+        } else {
+          const id = req.params.id
+          usersModels.getDetail(id)
+            .then((result) => {
+              const data = req.body
+              const oldImg = result[0].image
+              data.image = !req.file ? oldImg : req.file.filename
+              if (data.image !== oldImg) {
+                if (oldImg === 'default.png') {
+                  usersModels.updatePatch(id, data)
+                    .then((result) => {
+                      success(res, result, 'Update data success')
+                    })
+                    .catch((err) => {
+                      failed(res, [], err.message)
+                    })
+                } else {
+                  fs.unlink(`src/upload/${oldImg}`, () => {
+                    usersModels.updatePatch(id, data)
+                      .then((result) => {
+                        success(res, result, 'Update data success')
+                      })
+                      .catch((err) => {
+                        failed(res, [], err.message)
+                      })
+                  })
+                }
+              } else {
+                usersModels.updatePatch(id, data)
+                  .then((result) => {
+                    success(res, result, 'Update data success')
+                  })
+                  .catch((err) => {
+                    failed(res, [], err.message)
+                  })
+              }
+            })
+            .catch((err) => {
+              failed(res, [], err.message)
+            })
+        }
+      })
     } catch (error) {
       failed(res, [], 'internal server error')
     }

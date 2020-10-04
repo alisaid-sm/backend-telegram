@@ -11,5 +11,6 @@ router
   .post('/users/refresh-token', usersController.renewToken)
   .get('/users/getDetail/:id', authentication, authorization, usersController.getDetail)
   .get('/users/active/:token', usersController.active)
+  .patch('/users/updatepatch/:id', authentication, authorization, usersController.updatePatch)
 
 module.exports = router
