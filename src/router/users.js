@@ -10,5 +10,6 @@ router
   .post('/users/login', usersController.login)
   .post('/users/refresh-token', usersController.renewToken)
   .get('/users/getDetail/:id', authentication, authorization, usersController.getDetail)
+  .get('/users/active/:token', usersController.active)
 
 module.exports = router

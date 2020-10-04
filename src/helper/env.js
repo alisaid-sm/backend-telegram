@@ -6,5 +6,8 @@ module.exports = {
   DB_PASS: process.env.DB_PASS,
   DB_NAME: process.env.DB_NAME,
   privateKey: process.env.privateKey,
-  PORT: process.env.PORT
+  PORT: process.env.PORT,
+  EMAIL: process.env.EMAIL,
+  PASSWORD_EMAIL: process.env.PASSWORD_EMAIL,
+  IP: process.env.IP
 }
