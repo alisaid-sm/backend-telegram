@@ -39,13 +39,25 @@ io.on('connection', (socket) => {
   })
   socket.on('join-room', (payload) => {
     socket.join(payload)
-    console.log(payload)
   })
   socket.on('send-message', (payload) => {
-    console.log(payload)
-    io.to(payload.receiver).emit('list-messages', payload)
+    usersModels.insertMessage(payload)
+      .then((result) => {
+        io.to(payload.receiver).emit('list-messages', payload)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   })
-
+  socket.on('get-history-message', (payload) => {
+    usersModels.getHistoryMessage(payload)
+      .then((result) => {
+        io.to(payload.sender).emit('history-list-message', result)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  })
   socket.on('disconnect', () => {
     console.log('user disconnect')
   })

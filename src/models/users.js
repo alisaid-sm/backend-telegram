@@ -88,6 +88,29 @@ const users = {
         }
       })
     })
+  },
+  insertMessage: (payload) => {
+    return new Promise((resolve, reject) => {
+      db.query(`INSERT INTO message (sender, receiver, message, image) VALUES ('${payload.sender}','${payload.receiver}','${payload.message}','${payload.image}')`, (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  },
+  getHistoryMessage: (payload) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM message
+    WHERE (sender='${payload.sender}' AND receiver='${payload.receiver.name}') OR (sender='${payload.receiver.name}' AND receiver='${payload.sender}')`, (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
 
