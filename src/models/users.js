@@ -56,9 +56,9 @@ const users = {
       })
     })
   },
-  getDetail: (id) => {
+  getDetail: (name) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM users WHERE name='${id}'`, (err, result) => {
+      db.query(`SELECT * FROM users WHERE name='${name}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {
@@ -69,7 +69,18 @@ const users = {
   },
   updatePatch: (id, data) => {
     return new Promise((resolve, reject) => {
-      db.query('UPDATE users SET ? WHERE id=?', [data, id], (err, result) => {
+      db.query('UPDATE users SET ? WHERE name=?', [data, id], (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  },
+  getAll: () => {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT * FROM users', (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {

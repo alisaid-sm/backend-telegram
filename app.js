@@ -1,6 +1,7 @@
 const express = require('express')
 
 const http = require('http')
+const usersModels = require('./src/models/users')
 
 // eslint-disable-next-line no-unused-vars
 const socketio = require('socket.io')
@@ -23,8 +24,26 @@ const io = socketio(server)
 io.on('connection', (socket) => {
   console.log('user connected')
 
-  socket.on('send-message', (msg) => {
-    io.emit('get-message', msg)
+  socket.on('get-all-users', () => {
+    usersModels.getAll()
+      .then((result) => {
+        if (result.length === 0) {
+          console.log('data not found')
+        } else {
+          io.emit('list-users', result)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  })
+  socket.on('join-room', (payload) => {
+    socket.join(payload)
+    console.log(payload)
+  })
+  socket.on('send-message', (payload) => {
+    console.log(payload)
+    io.to(payload.receiver).emit('list-messages', payload)
   })
 
   socket.on('disconnect', () => {

@@ -149,8 +149,8 @@ const users = {
   },
   getDetail: (req, res) => {
     try {
-      const id = req.params.id
-      usersModels.getDetail(id)
+      const name = req.params.name
+      usersModels.getDetail(name)
         .then((result) => {
           if (result.length === 0) {
             failed(res, result, 'data not found')
