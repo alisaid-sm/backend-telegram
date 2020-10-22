@@ -111,6 +111,17 @@ const users = {
         }
       })
     })
+  },
+  delHistoryMessage: (payload) => {
+    return new Promise((resolve, reject) => {
+      db.query(`DELETE FROM message WHERE (sender='${payload.sender}' AND receiver='${payload.receiver.name}') OR (sender='${payload.receiver.name}' AND receiver='${payload.sender}')`, (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
 

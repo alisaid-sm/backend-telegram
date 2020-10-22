@@ -22,7 +22,7 @@ const server = http.createServer(app)
 const io = socketio(server)
 
 io.on('connection', (socket) => {
-  console.log('user connected')
+  io.emit('status', 'online')
 
   socket.on('get-all-users', () => {
     usersModels.getAll()
@@ -58,11 +58,25 @@ io.on('connection', (socket) => {
         console.log(err)
       })
   })
+  socket.on('del-history', (payload) => {
+    usersModels.delHistoryMessage(payload)
+      .then((result) => {
+        console.log(result)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  })
   socket.on('disconnect', () => {
-    console.log('user disconnect')
+    io.emit('status', 'offline')
   })
 })
 // eslint-disable-next-line no-undef
+app.use(express.static(path.join(__dirname, './dist')))
+app.use('*', (req, res) => {
+  res.sendFile(__dirname, './dist/index.html')
+})
+
 app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'ejs')
 
